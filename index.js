@@ -9,8 +9,8 @@ const deleteUserRoute = require("./routes/user/delete");
 
 app.use(express.urlencoded({ extended: false })); // research this more
 app.use(express.json());
-
-mongoose.connect(process.env.MLAB_URL || "mongodb://iby:iby123@ds018558.mlab.com:18558/restapi")
+//process.env.MLAB_URL
+mongoose.connect(`mongodb://iby:iby123@ds018558.mlab.com:18558/restapi`,  { useNewUrlParser: true })
   .then(() => console.log("Connected to MongoDB database..."))
   .catch(err => console.log(err));
 
@@ -45,4 +45,4 @@ app.use((error, req, res, next) => {
 
 const port = process.env.PORT || 8080;
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(port, () => console.log(`Server started on port ${port}...`));
