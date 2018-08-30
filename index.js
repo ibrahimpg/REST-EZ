@@ -2,10 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 
-const registerUserRoute = require("./routes/user/register");
-const loginUserRoute = require("./routes/user/login");
-const editUserRoute = require("./routes/user/edit");
-const deleteUserRoute = require("./routes/user/delete");
+const UserRoute = require("./routes/user");
 
 app.use(express.urlencoded({ extended: false })); // research this more
 app.use(express.json());
@@ -27,10 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/user-register", registerUserRoute);
-app.use("/user-login", loginUserRoute);
-app.use("/user-edit", editUserRoute);
-app.use("/user-delete", deleteUserRoute);
+app.use("/user", UserRoute);
 
 app.use((req, res, next) => {
   const error = new Error("Route not available.");

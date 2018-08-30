@@ -1,11 +1,29 @@
+// Modules
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+// Model
 const user = require("../../models/user");
 
+// Middleware
 const authorization = require("../../authorization");
+// maybe middleware for bcrypt and binary image saving?
 
-router.patch("/", authorization, (req, res) => {
+// Register User
+router.post("/register", (req, res) => {
+
+});
+
+// Login User
+router.post("/login", (req, res) => {
+
+});
+
+// Edit User
+router.patch("/edit", authorization, (req, res) => {
   //one way to do it
   //const id = req.params.productId;
   //Product.update({ _id: id }, { $set: { biography: req.body.newBiography, display: req.body.newPrice } });
@@ -25,6 +43,14 @@ router.patch("/", authorization, (req, res) => {
     .findByIdAndUpdate({ _id: req.authData.id })
     .then(() => res.json({ message: "Success" }))
     .catch((err) => res.json({ message: "Error", error: err }));
+});
+
+// Delete User
+router.delete("/delete", authorization, (req, res) => {
+  user
+    .findOneAndDelete({ _id: req.authData.id })
+    .then(() => res.json({ message: "Success" }))
+    .catch(err => res.json({ message: "Error", error: err }));
 });
 
 module.exports = router;
