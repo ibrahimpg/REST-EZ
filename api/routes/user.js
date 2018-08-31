@@ -1,15 +1,16 @@
 // Modules
 const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+const router = express.Router();
+
 // Model
-const user = require("../../models/user");
+const user = require("../models/user");
 
 // Middleware
-const authorization = require("../../authorization");
+const authorization = require("../middleware/authorization");
 // maybe middleware for bcrypt and binary image saving?
 
 // Register User

@@ -1,8 +1,9 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
 
-const UserRoute = require("./routes/user");
+const app = express();
+
+const UserRoute = require("./api/routes/user");
 
 app.use(express.urlencoded({ extended: false })); // research this more
 app.use(express.json());
