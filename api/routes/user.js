@@ -18,8 +18,8 @@ router.post("/register", (req, res) => {
     .find({ username: req.body.username })
     .exec()
     .then(user => {
-      if (user.length >= 1) {
-        return res.json({ message: "User already exists." });
+      if (user.length >= 1 || req.body.password.length < 6) {
+        return res.json({ message: "Registration failed." });
       } else {
         const newUser = new User({
           _id: new mongoose.Types.ObjectId(),
@@ -31,9 +31,10 @@ router.post("/register", (req, res) => {
         newUser
           .save()
           .then(() => res.json({ message: "User created." }))
-          .catch(err => res.json({ message: "Error", error: err }));
+          .catch((err) => res.json({ message: err }));
       }
     })
+    .catch((err) => res.json({ message: err }));
 });
 
 // Login User
@@ -53,11 +54,11 @@ router.post("/login", (req, res) => {
         }
       }
     })
-    .catch(err => res.json({ message: "Error", error: err }));
+    .catch(() => res.json({ message: "Error" }));
 });
 
-// Edit User
-router.patch("/edit", authorization, (req, res) => {
+// Update User
+router.patch("/update", authorization, (req, res) => {
   //one way to do it
   //const id = req.params.productId;
   //Product.update({ _id: id }, { $set: { biography: req.body.newBiography, display: req.body.newPrice } });
@@ -74,7 +75,7 @@ router.patch("/edit", authorization, (req, res) => {
   //this way of doing it means the req body you send has to be an array  of objects
   // ie: [ { "propName" : "biography", "value" : "newValue" } ]
   User
-    .findByIdAndUpdate({ _id: req.tokenData.id })
+    .findByIdAndUpdate({ _id: req.tokenData.id }) //does this need a .save() ??
     .then(() => res.json({ message: "User updated." }))
     .catch((err) => res.json({ message: "Error", error: err }));
 });
@@ -82,9 +83,10 @@ router.patch("/edit", authorization, (req, res) => {
 // Delete User
 router.delete("/delete", authorization, (req, res) => {
   User
-    .findOneAndDelete({ _id: req.tokenData.id }) //do we need .save() before then and catch here? and for edit above.. and what about exec to make this a proper promise and thus make the .catch actually work (if i underststand correctly)
+    .findByIdAndDelete(req.tokenData.id)
     .then(() => res.json({ message: "User deleted." }))
-    .catch(err => res.json({ message: "Error", error: err }));
+    .catch(() => res.json({ message: "Error" })); //test this a bit more. generate a JWT by logging in as someone.
+    //then use jwt.io to modify the token to have the id and user of another registered user and try to execute this
 });
 
 module.exports = router;

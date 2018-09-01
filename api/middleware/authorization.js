@@ -7,8 +7,6 @@ module.exports = (req, res, next) => {
     req.tokenData = decoded;
     next();
   } catch(err) {
-    return res.json({ message: err }); //remember that if your documentation promises a "message" response, it has
-    //to be included even if middleware failed, if "catch" comes into play, etc. run thru various failures to make sure
-    //that a "message" object always comes back
+    return res.json({ message: "Authentication Failed." });
   }
 };
