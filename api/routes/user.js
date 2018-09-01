@@ -74,7 +74,7 @@ router.patch("/edit", authorization, (req, res) => {
   //this way of doing it means the req body you send has to be an array  of objects
   // ie: [ { "propName" : "biography", "value" : "newValue" } ]
   User
-    .findByIdAndUpdate({ _id: req.authData.id })
+    .findByIdAndUpdate({ _id: req.tokenData.id })
     .then(() => res.json({ message: "User updated." }))
     .catch((err) => res.json({ message: "Error", error: err }));
 });
@@ -82,7 +82,7 @@ router.patch("/edit", authorization, (req, res) => {
 // Delete User
 router.delete("/delete", authorization, (req, res) => {
   User
-    .findOneAndDelete({ _id: req.authData.id }) //do we need .save() before then and catch here? and for edit above.. and what about exec to make this a proper promise and thus make the .catch actually work (if i underststand correctly)
+    .findOneAndDelete({ _id: req.tokenData.id }) //do we need .save() before then and catch here? and for edit above.. and what about exec to make this a proper promise and thus make the .catch actually work (if i underststand correctly)
     .then(() => res.json({ message: "User deleted." }))
     .catch(err => res.json({ message: "Error", error: err }));
 });
