@@ -1,26 +1,59 @@
 // Modules
 const express = require("express");
+const router = express.Router();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-const router = express.Router();
-
 // Model
-const user = require("../models/user");
+const User = require("../models/user");
 
 // Middleware
 const authorization = require("../middleware/authorization");
-// maybe middleware for bcrypt and binary image saving?
+// maybe middleware for binary image saving?
 
 // Register User
 router.post("/register", (req, res) => {
-
+  User
+    .find({ username: req.body.username })
+    .exec()
+    .then(user => {
+      if (user.length >= 1) {
+        return res.json({ message: "User already exists." });
+      } else {
+        const newUser = new User({
+          _id: new mongoose.Types.ObjectId(),
+          username: req.body.username,
+          password: bcrypt.hashSync(req.body.password, 10),
+          biography: "Bio...",
+          display: "Display..."
+        });
+        newUser
+          .save()
+          .then(() => res.json({ message: "User created." }))
+          .catch(err => res.json({ message: "Error", error: err }));
+      }
+    })
 });
 
 // Login User
 router.post("/login", (req, res) => {
-
+  User
+    .find({ username: req.body.username }) //change to findOne and remove [0] from subsequent? test it out
+    .exec()
+    .then(user => {
+      if (user.length < 1) {
+        return res.json({ message: "Login failed." });
+      } else {
+        if (bcrypt.compareSync(req.body.password, user[0].password) == true) {
+          const token = jwt.sign({username: user[0].username, id: user[0].id}, "secretKey", {expiresIn: "1h"}); //change pw to env var
+          return res.json({ message: "Login successful.", token });
+        } else {
+          return res.json({ message: "Login failed." });
+        }
+      }
+    })
+    .catch(err => res.json({ message: "Error", error: err }));
 });
 
 // Edit User
@@ -40,17 +73,17 @@ router.patch("/edit", authorization, (req, res) => {
   //});
   //this way of doing it means the req body you send has to be an array  of objects
   // ie: [ { "propName" : "biography", "value" : "newValue" } ]
-  user
+  User
     .findByIdAndUpdate({ _id: req.authData.id })
-    .then(() => res.json({ message: "Success" }))
+    .then(() => res.json({ message: "User updated." }))
     .catch((err) => res.json({ message: "Error", error: err }));
 });
 
 // Delete User
 router.delete("/delete", authorization, (req, res) => {
-  user
-    .findOneAndDelete({ _id: req.authData.id })
-    .then(() => res.json({ message: "Success" }))
+  User
+    .findOneAndDelete({ _id: req.authData.id }) //do we need .save() before then and catch here? and for edit above.. and what about exec to make this a proper promise and thus make the .catch actually work (if i underststand correctly)
+    .then(() => res.json({ message: "User deleted." }))
     .catch(err => res.json({ message: "Error", error: err }));
 });
 
