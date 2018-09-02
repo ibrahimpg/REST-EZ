@@ -47,7 +47,7 @@ router.post("/login", (req, res) => {
         return res.json({ message: "Login failed." });
       } else {
         if (bcrypt.compareSync(req.body.password, user[0].password) == true) {
-          const token = jwt.sign({username: user[0].username, id: user[0].id}, "secretKey", {expiresIn: "1h"}); //change pw to env var
+          const token = jwt.sign({username: user[0].username, id: user[0].id}, "secretKey", {expiresIn: "1h"});
           return res.json({ message: "Login successful.", token });
         } else {
           return res.json({ message: "Login failed." });
@@ -59,23 +59,9 @@ router.post("/login", (req, res) => {
 
 // Update User
 router.patch("/update", authorization, (req, res) => {
-  //one way to do it
-  //const id = req.params.productId;
-  //Product.update({ _id: id }, { $set: { biography: req.body.newBiography, display: req.body.newPrice } });
-  //});
-  //the above works when you send both bio and display in the patch. but what if you want one?
-  //const id = req.params.productId;
-  //const updateOps = {};
-  //for (const ops of req.body) { updateOps[ops.propName] = ops.value; } 
-  //Product.update({ _id: id }, { $set: { updateOps } })
-  // .exec() //this allows you to create a promie (then and catch)
-  // .then(res => {blahblah})
-  // .catch(err => messae: err blah blah)
-  //});
-  //this way of doing it means the req body you send has to be an array  of objects
-  // ie: [ { "propName" : "biography", "value" : "newValue" } ]
   User
-    .findByIdAndUpdate({ _id: req.tokenData.id }) //does this need a .save() ??
+    .findByIdAndUpdate(req.tokenData.id, { biography: req.body.biography, display: req.body.display },
+    {runValidators : true})
     .then(() => res.json({ message: "User updated." }))
     .catch((err) => res.json({ message: "Error", error: err }));
 });
@@ -85,8 +71,7 @@ router.delete("/delete", authorization, (req, res) => {
   User
     .findByIdAndDelete(req.tokenData.id)
     .then(() => res.json({ message: "User deleted." }))
-    .catch(() => res.json({ message: "Error" })); //test this a bit more. generate a JWT by logging in as someone.
-    //then use jwt.io to modify the token to have the id and user of another registered user and try to execute this
+    .catch((err) => res.json({ message: "Error", error: err }));
 });
 
 module.exports = router;
