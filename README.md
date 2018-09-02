@@ -18,7 +18,7 @@ A boilerplate REST API for user registration built with Node.js. Built to be eas
 
 ## Packages
 
-[express](https://github.com/expressjs/express) 4.16.3 --- [mongoose](https://github.com/Automattic/mongoose) 5.2.12 --- [node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) 8.3.0 --- [bcrypt.js](https://github.com/dcodeIO/bcrypt.js) 2.4.3
+[express](https://github.com/expressjs/express) 4.16.3 --- [mongoose](https://github.com/Automattic/mongoose) 5.2.12 --- [node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) 8.3.0 --- [bcrypt.js](https://github.com/dcodeIO/bcrypt.js) 2.4.3 --- [multer](https://github.com/expressjs/multer) 1.3.1
 
 ---
 
