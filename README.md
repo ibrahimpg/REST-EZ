@@ -35,7 +35,7 @@ Routes | HTTP | Request Objects | Response Objects[1]
 2. Sent in Authorization header as "Bearer <**token**>"
 3. Both bio and display must be sent to the update route.
 
-If you're wondering why username and
+If you're wondering why it isn't necessary to send the username in the update/delete routes, it's because the JWT middleware is able to unpack them from the token that is received.
 
 ---
 
@@ -64,3 +64,15 @@ If you're wondering why username and
 4. password (hashed, 6 characters minimum)
 5. bio (max 200 characters)
 6. display picture
+
+---
+
+## Directory Structure
+
+Coming soon.
+
+---
+
+## License
+
+MIT
