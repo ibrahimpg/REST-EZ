@@ -5,19 +5,16 @@ const app = express();
 
 const UserRoute = require("./api/routes/user");
 
-app.use(express.urlencoded({ extended: false })); // research this more
 app.use(express.json());
+
 //process.env.MLAB_URL
-mongoose.connect(`mongodb://iby:iby123@ds018558.mlab.com:18558/restapi`,  { useNewUrlParser: true })
+mongoose.connect(`mongodb://iby:iby123@ds018558.mlab.com:18558/restapi`, { useNewUrlParser: true })
   .then(() => console.log("Connected to MongoDB database..."))
   .catch(err => console.log(err));
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
+  res.header("Access-Control-Allow-Origin", "*"); //since this is actually meant to be used by specific domains, "*" should be the actual domain you're using with this
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
     return res.status(200).json({});
