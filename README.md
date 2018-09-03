@@ -25,7 +25,8 @@ A boilerplate REST API for user registration built with Node.js. Built to be eas
 ## API
 
 Routes | HTTP | Request Objects | Response Objects[1]
--|-|-|-
+-|-|-|-|-
+<**url**>/user/view | GET | none | message
 <**url**>/user/register | POST | username, password | message, error
 <**url**>/user/login | POST | username, password | message, error, token
 <**url**>/user/update | PATCH[3] | token[2], bio, display | message, error

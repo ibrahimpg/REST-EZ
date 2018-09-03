@@ -16,8 +16,7 @@ const User = require("../models/user");
 // View Users
 router.get("/view", (req, res) => {
   User.find()
-    //.sort({ date: -1 }) change date to created i guess
-    .then(users => res.json(users))
+    .then(users => res.json({message: users}))
 });
 
 // Register User
@@ -48,14 +47,14 @@ router.post("/register", (req, res) => {
 // Login User
 router.post("/login", (req, res) => {
   User
-    .find({ username: req.body.username }) //change to findOne and remove [0] from subsequent? test it out
+    .find({ username: req.body.username }) //change to findOne and remove [0] from subsequent?
     .exec()
     .then(user => {
       if (user.length < 1) {
         return res.json({ message: "Login failed." });
       } else {
         if (bcrypt.compareSync(req.body.password, user[0].password) == true) {
-          const token = jwt.sign({username: user[0].username, id: user[0].id}, "secretKey", {expiresIn: "1h"});
+          const token = jwt.sign({username: user[0].username, id: user[0].id}, process.env.JWT_KEY, {expiresIn: "1h"});
           return res.json({ message: "Login successful.", token });
         } else {
           return res.json({ message: "Login failed." });
@@ -74,7 +73,7 @@ router.patch("/update", authorization, upload.single("display"), (req, res) => {
     }, {runValidators : true})
     .then(() => res.json({ message: "User updated." }))
     .catch((err) => res.json({ message: "Error", error: err }));
-    fs.unlink("./uploads/" + req.file.originalname);
+    fs.unlink("./temp/" + req.file.originalname);
 });
 
 // Delete User

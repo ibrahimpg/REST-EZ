@@ -1,3 +1,11 @@
+/* 
+**Environmental Variables to set**
+process.env.MLAB_URL
+process.env.CLIENT_URL
+process.env.PORT
+process.env.JWT_KEY
+*/
+
 const express = require("express");
 const mongoose = require("mongoose");
 
@@ -6,15 +14,13 @@ const app = express();
 const UserRoute = require("./api/routes/user");
 
 app.use(express.json());
-//urlencoded might be necessary for multer
 
-//process.env.MLAB_URL
-mongoose.connect(`mongodb://iby:iby123@ds018558.mlab.com:18558/restapi`, { useNewUrlParser: true })
+mongoose.connect(process.env.MLAB_URL, { useNewUrlParser: true })
   .then(() => console.log("Connected to MongoDB database..."))
   .catch(err => console.log(err));
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); //since this is actually meant to be used by specific domains, "*" should be the actual domain you're using with this
+  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
