@@ -17,6 +17,8 @@ const User = require("../models/user");
 router.get("/view", (req, res) => {
   User.find()
     .then(users => res.json({message: users}))
+    .catch((err) => res.json({ message: err }));
+    //possibly include optional search params
 });
 
 // Register User
