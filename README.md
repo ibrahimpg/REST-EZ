@@ -12,9 +12,23 @@ A boilerplate REST API for user registration built with Node.js. Built to be eas
 
 3. `npm install`
 
-4. Follow configuration instructions in index.js
-
 ---
+
+## Environmental Variables
+
+* JWT_KEY
+* PORT
+* CLIENT_URL
+* MLAB_URL
+
+## Configuration
+
+There are several aspects of this API that are easily configurable to tailor to specific use cases.
+
+* api/models/user.js - Change the minimum and maximum length of username's, as well as the maximum length of bio's.
+* api/middleware/multer.js - File size is limited to 1MB (1024 x 1024 x 1). The last number can be changed to reflect the MB limit you want on file uploads, up to the MongoDB maximum document size of 16 MB. Keep in mind that large files take longer to process and save and can make your database slow.
+* api/middleware/multer.js - Change the file filter requirements to include the image file extensions you want to accept, or remove the pre-existing acceptance jpeg and/or png.
+* api/routes/user.js - Change the minimum password length in the registration route, as well as the default bio upon registration.
 
 ## Packages
 
@@ -46,9 +60,19 @@ If you're wondering why it isn't necessary to send the username in the update/de
 
 2. Implement "are you sure you would like to delete your account?" functionality on the client-side. The delete route executes if it receives a valid token. The token contains the user's internal ID and username (and the client having a valid token indicates that they signed in to that account with the correct password).
 
-3. How to use FormData();
+3. Sending tokens along with form data is easy with the [FormData interface](https://developer.mozilla.org/en-US/docs/Web/API/FormData).
 
-4. How to show Base64 as image on the client.
+4. Encode a string in base-64:
+
+`let newData = btoa(String.fromCharCode(...new Uint8Array(oldData)))`
+
+5. Display base-64 as an image in HTML:
+
+`<img src = "data:${contentType};base64, ${newData}" alt="alt text" width=X height=Y>`
+
+6. When receiving a token from the server, you can save it to the client through [local or session storage](https://www.w3schools.com/html/html5_webstorage.asp).
+
+7. Use the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to make requests to the server in vanilla JavaScript.
 
 ---
 

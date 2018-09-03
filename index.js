@@ -1,11 +1,3 @@
-/* 
-**Environmental Variables to set**
-process.env.MLAB_URL
-process.env.CLIENT_URL
-process.env.PORT
-process.env.JWT_KEY
-*/
-
 const express = require("express");
 const mongoose = require("mongoose");
 
