@@ -1,21 +1,21 @@
 {
-  "name": "node-api-boilerplate",
+  "name": "rest-ez",
   "version": "1.0.0",
-  "description": "A boilerplate REST API for user registration built with Node.js",
+  "description": "A lightweight user registration REST API for Node.js",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ibrahimpg/node-api-boilerplate.git"
+    "url": "git+https://github.com/ibrahimpg/REST-EZ.git"
   },
   "author": "Ibrahim PG",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ibrahimpg/node-api-boilerplate/issues"
+    "url": "https://github.com/ibrahimpg/REST-EZ/issues"
   },
-  "homepage": "https://github.com/ibrahimpg/node-api-boilerplate#readme",
+  "homepage": "https://github.com/ibrahimpg/REST-EZ#readme",
   "dependencies": {
     "bcryptjs": "2.4.3",
     "express": "4.16.3",

@@ -32,7 +32,7 @@ router.post("/register", (req, res) => {
           _id: new mongoose.Types.ObjectId(),
           username: req.body.username,
           password: bcrypt.hashSync(req.body.password, 10),
-          biography: "Bio...",
+          bio: "Bio...",
           display: { data: null, contentType: null }
         });
         newUser
@@ -68,7 +68,7 @@ router.post("/login", (req, res) => {
 router.patch("/update", authorization, upload.single("display"), (req, res) => {
   User
     .findByIdAndUpdate(req.tokenData.id, {
-      biography: req.body.biography,
+      bio: req.body.bio,
       display: { data: fs.readFileSync(req.file.path), contentType: req.file.mimetype }
     }, {runValidators : true})
     .then(() => res.json({ message: "User updated." }))
