@@ -6,34 +6,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 
-//Multer
-
-const multer = require('multer');
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function(req, file, cb) {
-      cb(null, './uploads/');
-    },
-    filename: function(req, file, cb) {
-      cb(null, file.originalname);
-    }
-  }),
-  limits: { fileSize: 1024 * 1024 * 1 },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-      cb(null, true);
-    } else {
-      cb(null, false);
-    }
-  }
-});
+// Middleware
+const authorization = require("../middleware/authorization");
+const upload = require("../middleware/multer");
 
 // Model
 const User = require("../models/user");
-
-// Middleware
-const authorization = require("../middleware/authorization");
 
 // View Users
 router.get("/view", (req, res) => {
@@ -92,14 +70,11 @@ router.patch("/update", authorization, upload.single("display"), (req, res) => {
   User
     .findByIdAndUpdate(req.tokenData.id, {
       biography: req.body.biography,
-      display: {
-        data: fs.readFileSync(req.file.path),
-        contentType: req.file.mimetype
-      }
-    },
-    {runValidators : true})
+      display: { data: fs.readFileSync(req.file.path), contentType: req.file.mimetype }
+    }, {runValidators : true})
     .then(() => res.json({ message: "User updated." }))
     .catch((err) => res.json({ message: "Error", error: err }));
+    fs.unlink("./uploads/" + req.file.originalname);
 });
 
 // Delete User
