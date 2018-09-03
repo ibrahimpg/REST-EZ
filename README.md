@@ -45,6 +45,10 @@ If you're wondering why it isn't necessary to send the username in the update/de
 
 2. Implement "are you sure you would like to delete your account?" functionality on the client-side. The delete route executes if it receives a valid token. The token contains the user's internal ID and username (and the client having a valid token indicates that they signed in to that account with the correct password).
 
+3. How to use FormData();
+
+4. How to show Base64 as image on the client.
+
 ---
 
 ## Maybe

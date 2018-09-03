@@ -6,6 +6,7 @@ const app = express();
 const UserRoute = require("./api/routes/user");
 
 app.use(express.json());
+//urlencoded might be necessary for multer
 
 //process.env.MLAB_URL
 mongoose.connect(`mongodb://iby:iby123@ds018558.mlab.com:18558/restapi`, { useNewUrlParser: true })
