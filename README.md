@@ -45,8 +45,9 @@ Simple to customize and easily extendable, this API is optimized for quick deplo
 
 ## API
 
+
 Routes | HTTP | Request Objects | Response Objects[1]
-|-|-|-|-|-|
+| --- | --- | --- | --- |
 <**url**>/user/view | GET | none | message, error
 <**url**>/user/register | POST | username, password | message, error
 <**url**>/user/login | POST | username, password | message, error, token
