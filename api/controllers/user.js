@@ -11,8 +11,6 @@ const User = require('../models/user');
 
 // Register User
 exports.register = (req, res) => {
-  const randomStr = Math.random().toString(36).substring(2, 15)
-  + Math.random().toString(36).substring(2, 15);
   User.find({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
@@ -29,7 +27,8 @@ exports.register = (req, res) => {
             password: bcrypt.hashSync(req.body.password, 10),
             bio: 'Bio...',
             display: result.secure_url,
-            hash: bcrypt.hashSync(randomStr, 10),
+            hash: bcrypt.hashSync(Math.random().toString(36).substring(2, 15)
+  + Math.random().toString(36).substring(2, 15), 10),
           });
           newUser.save();
           // .then(() => {
