@@ -15,7 +15,7 @@ const UserControllers = require('../controllers/user');
 router.post('/register', UserControllers.register);
 
 // Verify User
-router.post('/verify/:hash', UserControllers.verify);
+router.get('/verify/:hash', UserControllers.verify);
 
 // Login User
 router.post('/login', UserControllers.login);

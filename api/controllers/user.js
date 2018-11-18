@@ -41,7 +41,7 @@ exports.register = (req, res) => {
         ${req.body.name},
         Please click on the link below in order to verify your email.
         ---    
-        ${process.env.SERVER_URL}/user/verify/:${randomString}
+        ${process.env.SERVER_URL}/user/verify/${randomString}
         `,
           });
         })
