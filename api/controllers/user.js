@@ -52,12 +52,12 @@ exports.register = (req, res) => {
 
 // Login User
 exports.login = (req, res) => {
-  User.findOne({ username: req.body.username }).exec()
+  User.findOne({ email: req.body.email }).exec()
     .then((user) => {
       if (bcrypt.compareSync(req.body.password, user.password) === true) {
-        const token = jwt.sign({ username: user.username, id: user._id }, process.env.JWT_KEY, { expiresIn: '12h' });
+        const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_KEY, { expiresIn: '12h' });
         return res.json({
-          message: 'Login successful.', token, username: user.username, id: user._id,
+          message: 'Login successful.', token, name: user.name, id: user._id,
         });
       }
       return res.status(400).json({ message: 'Login failed.' });
