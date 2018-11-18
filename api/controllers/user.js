@@ -50,7 +50,7 @@ exports.register = (req, res) => {
           // });
         });
     })
-    .catch(() => res.sendStatus(500));
+    .catch(() => res.status(500).json({ message: 'Reg failed.' }));
 };
 
 // Verify User
