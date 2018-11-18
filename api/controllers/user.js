@@ -52,15 +52,14 @@ exports.register = (req, res) => {
 
 // Verify User
 exports.verify = (req, res) => {
-  User.find({ hash: req.params.hash }).exec()
+  User.findOne({ hash: req.params.hash }).exec()
     .then((user) => {
       if (user.length === 0) {
         return res.status(400).json({ message: 'Verification failed.' });
       }
       return User.findByIdAndUpdate(user._id,
         { verified: true }, { runValidators: true })
-        .then(() => res.json('Verification success.'))
-        .catch(() => res.status(500));
+        .then(() => res.json('Verification success.'));
     })
     .catch(() => res.status(500));
 };
