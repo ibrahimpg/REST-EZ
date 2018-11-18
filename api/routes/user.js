@@ -29,16 +29,4 @@ router.patch('/update', authorization, upload.single('display'), UserControllers
 // Delete User
 router.delete('/delete', authorization, UserControllers.delete);
 
-// Follow User
-router.patch('/follow', authorization, UserControllers.follow);
-
-// Unfollow User
-router.patch('/unfollow', authorization, UserControllers.unfollow);
-
-// Block User
-router.patch('/block', authorization, UserControllers.block);
-
-// Unblock User
-router.patch('/unblock', authorization, UserControllers.unblock);
-
 module.exports = router;
