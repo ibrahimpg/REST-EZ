@@ -51,7 +51,7 @@ exports.register = (req, res) => {
 };
 
 // Verify User
-exports.register = (req, res) => {
+exports.verify = (req, res) => {
   User.find({ hash: req.params.hash }).exec()
     .then((user) => {
       if (user.length === 0) {
