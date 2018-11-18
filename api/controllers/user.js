@@ -29,6 +29,7 @@ exports.register = (req, res) => {
             display: result.secure_url,
             hash: bcrypt.hashSync(Math.random().toString(36).substring(2, 15)
   + Math.random().toString(36).substring(2, 15), 10),
+            verified: false,
           });
           newUser.save();
           // .then(() => {
