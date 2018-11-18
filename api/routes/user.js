@@ -1,89 +1,29 @@
 // Modules
-const express = require("express");
+const express = require('express');
+const multer = require('multer');
+
 const router = express.Router();
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const fs = require("fs");
+const upload = multer({ dest: './temp/' });
 
 // Middleware
-const authorization = require("../middleware/authorization");
-const upload = require("../middleware/multer");
+const authorization = require('../middleware/authorization');
 
-// Model
-const User = require("../models/user");
-
-// View Users
-router.get("/view", (req, res) => {
-  User.find()
-    .then(users => res.json({message: users}))
-    .catch((err) => res.json({ message: err }));
-    //possibly include optional search params
-});
+// Controllers
+const UserControllers = require('../controllers/user');
 
 // Register User
-router.post("/register", (req, res) => {
-  User
-    .find({ username: req.body.username })
-    .exec()
-    .then(user => {
-      if (user.length >= 1 || req.body.password.length < 6) {
-        return res.json({ message: "Registration failed." });
-      } else {
-        const newUser = new User({
-          _id: new mongoose.Types.ObjectId(),
-          username: req.body.username,
-          password: bcrypt.hashSync(req.body.password, 10),
-          bio: "Bio...",
-          display: { data: null, contentType: null }
-        });
-        newUser
-          .save()
-          .then(() => res.json({ message: "User created." }))
-          .catch((err) => res.json({ message: err }));
-      }
-    })
-    .catch((err) => res.json({ message: err }));
-});
+router.post('/register', UserControllers.register);
+
+// Verify User
+router.post('/verify/:userId/:hash', UserControllers.verify);
 
 // Login User
-router.post("/login", (req, res) => {
-  User
-    .find({ username: req.body.username }) //change to findOne and remove [0] from subsequent?
-    .exec()
-    .then(user => {
-      if (user.length < 1) {
-        return res.json({ message: "Login failed." });
-      } else {
-        if (bcrypt.compareSync(req.body.password, user[0].password) == true) {
-          const token = jwt.sign({username: user[0].username, id: user[0].id}, process.env.JWT_KEY, {expiresIn: "1h"});
-          return res.json({ message: "Login successful.", token });
-        } else {
-          return res.json({ message: "Login failed." });
-        }
-      }
-    })
-    .catch(() => res.json({ message: "Error" }));
-});
+router.post('/login', UserControllers.login);
 
 // Update User
-router.patch("/update", authorization, upload.single("display"), (req, res) => {
-  User
-    .findByIdAndUpdate(req.tokenData.id, {
-      bio: req.body.bio,
-      display: { data: fs.readFileSync(req.file.path), contentType: req.file.mimetype }
-    }, {runValidators : true})
-    .then(() => res.json({ message: "User updated." }))
-    .catch((err) => res.json({ message: "Error", error: err }));
-    fs.unlink("./temp/" + req.file.originalname);
-});
+router.patch('/update', authorization, upload.single('display'), UserControllers.update);
 
 // Delete User
-router.delete("/delete", authorization, (req, res) => {
-  User
-    .findByIdAndDelete(req.tokenData.id)
-    .then(() => res.json({ message: "User deleted." }))
-    .catch((err) => res.json({ message: "Error", error: err }));
-});
+router.delete('/delete', authorization, UserControllers.delete);
 
 module.exports = router;
