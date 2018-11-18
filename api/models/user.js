@@ -27,8 +27,8 @@ const UserSchema = mongoose.Schema({
   password: { type: String, required: true },
   bio: { type: String, maxlength: 500 },
   display: { type: String, required: true },
-  hash: { type: String },
-  verified: { type: Boolean },
+  // hash: { type: String },
+  // verified: { type: Boolean },
 });
 
 module.exports = mongoose.model('User', UserSchema);

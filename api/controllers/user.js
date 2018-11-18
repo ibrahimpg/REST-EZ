@@ -11,7 +11,7 @@ const User = require('../models/user');
 
 // Register User
 exports.register = (req, res) => {
-  User.findOne({ email: req.body.email }).exec()
+  User.find({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
         return res.status(400).json({ message: 'Registration failed.' });
@@ -27,9 +27,8 @@ exports.register = (req, res) => {
             password: bcrypt.hashSync(req.body.password, 10),
             bio: 'Bio...',
             display: result.secure_url,
-            hash: bcrypt.hashSync(Math.random().toString(36).substring(2, 15)
-  + Math.random().toString(36).substring(2, 15), 10),
-            verified: false,
+            // hash: bcrypt.hashSync(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15), 10),
+            // verified: false,
           });
           newUser.save().then(() => res.status(201).json('User created.'));
           // .then(() => {
