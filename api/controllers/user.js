@@ -66,7 +66,7 @@ exports.verify = (req, res) => {
       }
       return res.json('Verification failed.');
     })
-    .catch(() => res.sendStatus(500));
+    .catch(() => res.status(500).json({ message: 'Reg failed.' }));
 };
 
 // Login User
