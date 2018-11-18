@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary');
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 
 // Models
 const User = require('../models/user');
@@ -31,24 +31,24 @@ exports.register = (req, res) => {
             display: result.secure_url,
             hash: bcrypt.hashSync(randomStr, 10),
           });
-          newUser.save()
-            .then(() => {
-              const transporter = nodemailer.createTransport({
-                service: 'Outlook365',
-                auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
-              });
-              transporter.sendMail({
-                from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
-                to: req.body.email,
-                subject: 'Automatic reply from Ibrahim P.G.',
-                text: `
-              ${req.body.name},
-              Please verify your email by following the link below.
-              ---    
-              ${process.env.SERVER_URL}/user/verify/${newUser._id}/${randomStr}
-              `,
-              });
-            });
+          newUser.save();
+          // .then(() => {
+          //   const transporter = nodemailer.createTransport({
+          //     service: 'Outlook365',
+          //     auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
+          //   });
+          //   transporter.sendMail({
+          //     from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
+          //     to: req.body.email,
+          //     subject: 'Automatic reply from Ibrahim P.G.',
+          //     text: `
+          //   ${req.body.name},
+          //   Please verify your email by following the link below.
+          //   ---
+          //   ${process.env.SERVER_URL}/user/verify/${newUser._id}/${randomStr}
+          //   `,
+          //   });
+          // });
         })
         .then(() => res.status(201).json('User created.'));
     })
