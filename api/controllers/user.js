@@ -31,7 +31,7 @@ exports.register = (req, res) => {
   + Math.random().toString(36).substring(2, 15), 10),
             verified: false,
           });
-          newUser.save();
+          newUser.save().then(() => res.status(201).json('User created.'));
           // .then(() => {
           //   const transporter = nodemailer.createTransport({
           //     service: 'Outlook365',
@@ -49,8 +49,7 @@ exports.register = (req, res) => {
           //   `,
           //   });
           // });
-        })
-        .then(() => res.status(201).json('User created.'));
+        });
     })
     .catch(() => res.sendStatus(500));
 };
