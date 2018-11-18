@@ -30,19 +30,20 @@ exports.self = (req, res) => {
 
 // Register User
 exports.register = (req, res) => {
-  User.find({ username: req.body.username }).exec()
+  User.find({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
         return res.status(400).json({ message: 'Registration failed.' });
       }
-      return cloudinary.v2.uploader.upload('./temp/placeholder.jpg',
-        { public_id: req.body.username, tags: [req.body.username] })
+      return cloudinary.v2.uploader.upload('./temp/placeholder.jpg')
         .then(result => new User({
           _id: new mongoose.Types.ObjectId(),
-          username: req.body.username,
+          email: req.body.email,
+          name: req.body.name,
           password: bcrypt.hashSync(req.body.password, 10),
           bio: 'Bio...',
           display: result.secure_url,
+          verified: false,
         }).save())
         .then(() => res.status(201).json('User created.'));
     })

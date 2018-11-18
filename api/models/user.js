@@ -2,16 +2,19 @@ const mongoose = require('mongoose');
 
 const UserSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  created: { type: Date, default: Date.now },
-  username: {
-    type: String, required: true, unique: true, minlength: 6, maxlength: 16, match: /^[a-z0-9-_]+$/,
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
+  },
+  name: {
+    type: String, required: true, minlength: 1, maxlength: 20, match: /^[a-z0-9-_]+$/,
   },
   password: { type: String, required: true },
-  bio: { type: String, maxlength: 200 },
+  bio: { type: String, maxlength: 500 },
   display: { type: String },
-  followers: [{ type: String }],
-  following: [{ type: String }],
-  blocked: [{ type: String }],
+  verified: { type: Boolean },
 });
 
 module.exports = mongoose.model('User', UserSchema);
