@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema({
     required: true,
     minlength: 1,
     maxlength: 20,
-    match: /^[a-z ,.'-]+$/i,
+    // match: /^[a-z ,.'-]+$/i,
   },
   email: {
     type: String,
