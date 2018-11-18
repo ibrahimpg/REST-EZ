@@ -11,7 +11,7 @@ const User = require('../models/user');
 
 // Register User
 exports.register = (req, res) => {
-  User.find({ email: req.body.email }).exec()
+  User.findOne({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
         return res.status(400).json({ message: 'Registration failed.' });
