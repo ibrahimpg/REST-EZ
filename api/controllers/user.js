@@ -39,13 +39,27 @@ exports.register = (req, res) => {
             subject: 'Automatic reply from Ibrahim P.G.',
             text: `
         ${req.body.name},
-        I have received your message and will get back to you as soon as possible. Thank you for your interest!
+        Please click on the link below in order to verify your email.
         ---    
         ${process.env.SERVER_URL}/user/verify/${randomString}
         `,
           });
         })
         .then(() => res.status(201).json('User created.'));
+    })
+    .catch(() => res.status(500));
+};
+
+// Verify User
+exports.register = (req, res) => {
+  User.find({ hash: req.params.hash }).exec()
+    .then((user) => {
+      if (user.length === 0) {
+        return res.status(400).json({ message: 'Verification failed.' });
+      }
+      return User.findByIdAndUpdate(user._id,
+        { verified: true }, { runValidators: true })
+        .then(() => res.json('Verification success.'));
     })
     .catch(() => res.status(500));
 };
