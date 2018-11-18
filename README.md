@@ -1,4 +1,4 @@
-# REST-EZ
+# REST-EZ 2.0
 
 ## A lightweight user registration REST API for Node.js
 
