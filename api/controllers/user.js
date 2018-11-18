@@ -17,38 +17,16 @@ exports.register = (req, res) => {
         return res.status(400).json({ message: 'Registration failed.' });
       }
       return cloudinary.v2.uploader.upload('./temp/placeholder.jpg',
-        { tags: [req.body.name] })
-        .then((result) => {
-          const newUser = new User({
-            _id: new mongoose.Types.ObjectId(),
-            // username: req.body.username,
-            name: req.body.name,
-            email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, 10),
-            bio: 'Bio...',
-            display: result.secure_url,
-            // hash: bcrypt.hashSync(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15), 10),
-            // verified: false,
-          });
-          newUser.save().then(() => res.status(201).json('User created.'));
-          // .then(() => {
-          //   const transporter = nodemailer.createTransport({
-          //     service: 'Outlook365',
-          //     auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
-          //   });
-          //   transporter.sendMail({
-          //     from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
-          //     to: req.body.email,
-          //     subject: 'Automatic reply from Ibrahim P.G.',
-          //     text: `
-          //   ${req.body.name},
-          //   Please verify your email by following the link below.
-          //   ---
-          //   ${process.env.SERVER_URL}/user/verify/${newUser._id}/${randomStr}
-          //   `,
-          //   });
-          // });
-        });
+        { public_id: req.body.email, tags: [req.body.email] })
+        .then(result => new User({
+          _id: new mongoose.Types.ObjectId(),
+          name: req.body.name,
+          email: req.body.email,
+          password: bcrypt.hashSync(req.body.password, 10),
+          bio: 'Bio...',
+          display: result.secure_url,
+        }).save())
+        .then(() => res.status(201).json('User created.'));
     })
     .catch(() => res.status(500).json({ message: 'Reg failed.' }));
 };
