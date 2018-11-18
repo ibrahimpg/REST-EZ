@@ -59,7 +59,8 @@ exports.verify = (req, res) => {
       }
       return User.findByIdAndUpdate(user._id,
         { verified: true }, { runValidators: true })
-        .then(() => res.json('Verification success.'));
+        .then(() => res.json('Verification success.'))
+        .catch(() => res.status(500));
     })
     .catch(() => res.status(500));
 };
