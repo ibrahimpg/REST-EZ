@@ -1,14 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
-
-const UserRoute = require('./api/routes/user');
 
 const app = express();
 
+const UserRoute = require('./api/routes/user');
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+
 app.use(express.json());
 
-app.options('*', cors());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.UI_URL);
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  next();
+});
 
 app.use('/user', UserRoute);
 
@@ -23,8 +29,6 @@ app.use((error, req, res) => {
   res.json({ error: { message: error.message } });
 });
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
-
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8888;
 
 app.listen(port);

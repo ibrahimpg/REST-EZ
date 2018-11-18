@@ -4,55 +4,59 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary');
-// const nodemailer = require('nodemailer');
 
 // Models
 const User = require('../models/user');
 
+// View User Profile Username/Bio
+exports.user = (req, res) => {
+  User.findOne({ username: req.params.username })
+    .then(user => res.json({
+      bio: user.bio,
+      username: user.username,
+      display: user.display,
+      followers: user.followers,
+      following: user.following,
+    }))
+    .catch(() => res.status(500));
+};
+
+// View Your Profile Details/Settings
+exports.self = (req, res) => {
+  User.findOne({ username: req.tokenData.username })
+    .then(user => res.json(user))
+    .catch(() => res.status(500));
+};
+
 // Register User
 exports.register = (req, res) => {
-  User.find({ email: req.body.email }).exec()
+  User.find({ username: req.body.username }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
         return res.status(400).json({ message: 'Registration failed.' });
       }
       return cloudinary.v2.uploader.upload('./temp/placeholder.jpg',
-        { public_id: req.body.email, tags: [req.body.email] })
+        { public_id: req.body.username, tags: [req.body.username] })
         .then(result => new User({
           _id: new mongoose.Types.ObjectId(),
-          name: req.body.name,
-          email: req.body.email,
+          username: req.body.username,
           password: bcrypt.hashSync(req.body.password, 10),
           bio: 'Bio...',
           display: result.secure_url,
         }).save())
         .then(() => res.status(201).json('User created.'));
     })
-    .catch(() => res.status(500).json({ message: 'Reg failed.' }));
-};
-
-// Verify User
-exports.verify = (req, res) => {
-  User.findById(req.params.userId)
-    .then((user) => {
-      if (bcrypt.compareSync(req.params.hash, user.hash) === true) {
-        return User.findByIdAndUpdate(req.tokenData.id, { verified: true }, { runValidators: true })
-          .then(() => res.json('Verification successful.'))
-          .catch(() => res.status(500));
-      }
-      return res.json('Verification failed.');
-    })
-    .catch(() => res.status(500).json({ message: 'Reg failed.' }));
+    .catch(() => res.status(500));
 };
 
 // Login User
 exports.login = (req, res) => {
-  User.findOne({ email: req.body.email }).exec()
+  User.findOne({ username: req.body.username }).exec()
     .then((user) => {
       if (bcrypt.compareSync(req.body.password, user.password) === true) {
-        const token = jwt.sign({ name: user.name, id: user._id }, process.env.JWT_KEY, { expiresIn: '12h' });
+        const token = jwt.sign({ username: user.username, id: user._id }, process.env.JWT_KEY, { expiresIn: '12h' });
         return res.json({
-          message: 'Login successful.', token, name: user.name, id: user._id,
+          message: 'Login successful.', token, username: user.username, id: user._id,
         });
       }
       return res.status(400).json({ message: 'Login failed.' });
@@ -69,7 +73,7 @@ exports.update = (req, res) => {
       .catch(() => res.status(500));
   }
   return cloudinary.v2.uploader.upload(req.file.path, {
-    public_id: req.tokenData.id, invalidate: true, format: 'jpg', tags: [req.tokenData.id],
+    public_id: req.tokenData.username, invalidate: true, format: 'jpg', tags: [req.tokenData.username],
   })
     .then(result => User.findByIdAndUpdate(req.tokenData.id,
       { bio: req.body.bio || ' ', display: result.secure_url }, { runValidators: true }))
