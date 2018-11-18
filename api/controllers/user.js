@@ -4,32 +4,14 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary');
+const nodemailer = require('nodemailer');
 
 // Models
 const User = require('../models/user');
 
-// View User Profile Username/Bio
-exports.user = (req, res) => {
-  User.findOne({ username: req.params.username })
-    .then(user => res.json({
-      bio: user.bio,
-      username: user.username,
-      display: user.display,
-      followers: user.followers,
-      following: user.following,
-    }))
-    .catch(() => res.status(500));
-};
-
-// View Your Profile Details/Settings
-exports.self = (req, res) => {
-  User.findOne({ username: req.tokenData.username })
-    .then(user => res.json(user))
-    .catch(() => res.status(500));
-};
-
 // Register User
 exports.register = (req, res) => {
+  const randomString = 'whatever';
   User.find({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
@@ -44,7 +26,25 @@ exports.register = (req, res) => {
           bio: 'Bio...',
           display: result.secure_url,
           verified: false,
+          hash: randomString,
         }).save())
+        .then(() => {
+          const transporter = nodemailer.createTransport({
+            service: 'Outlook365',
+            auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
+          });
+          transporter.sendMail({
+            from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
+            to: req.body.email,
+            subject: 'Automatic reply from Ibrahim P.G.',
+            text: `
+        ${req.body.name},
+        I have received your message and will get back to you as soon as possible. Thank you for your interest!
+        ---    
+        ${process.env.SERVER_URL}/user/verify/${randomString}
+        `,
+          });
+        })
         .then(() => res.status(201).json('User created.'));
     })
     .catch(() => res.status(500));
