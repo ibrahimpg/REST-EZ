@@ -17,6 +17,15 @@ router.post('/register', UserControllers.register);
 // Verify User
 router.get('/verify/:hash', UserControllers.verify);
 
+// Forgot Password
+router.post('/forgot', UserControllers.forgot);
+
+// Reset Password
+router.post('/reset/:hash', UserControllers.reset);
+
+// Change Password
+router.post('/changepass', UserControllers.changepass);
+
 // Login User
 router.post('/login', UserControllers.login);
 

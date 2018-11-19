@@ -65,6 +65,72 @@ exports.verify = (req, res) => {
     .catch(() => res.status(500));
 };
 
+// Forgot Password
+exports.forgot = (req, res) => {
+  const randomString = Math.random().toString(36).substring(2, 15)
+  + Math.random().toString(36).substring(2, 15);
+  User.findOne({ email: req.body.email }).exec()
+    .then((user) => {
+      if (user.length === 0 || user.verified === false) {
+        return res.status(400).json('Email does not exist on record or is not yet verified.');
+      }
+      return User.findByIdAndUpdate(user._id,
+        { hash: randomString }, { runValidators: true })
+        .then(() => {
+          const transporter = nodemailer.createTransport({
+            service: 'Outlook365',
+            auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
+          });
+          transporter.sendMail({
+            from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
+            to: req.body.email,
+            subject: 'Automatic reply from Ibrahim P.G.',
+            text: `
+        ${user.name},
+        Please click on the link below in order to reset your password.
+        ---    
+        ${process.env.SERVER_URL}/user/reset/${randomString}
+        `,
+          });
+        })
+        .then(() => res.status(201).json('Instructions on password reset sent to email.'));
+    })
+    .catch(() => res.status(500));
+};
+
+// Reset Password
+exports.reset = (req, res) => {
+  const randomString = Math.random().toString(36).substring(2, 15)
+  + Math.random().toString(36).substring(2, 15);
+  User.findOne({ hash: req.params.hash }).exec()
+    .then((user) => {
+      if (user.length === 0) {
+        return res.status(400).json({ message: 'Reset failed.' });
+      }
+      return User.findByIdAndUpdate(user._id,
+        { password: bcrypt.hashSync(randomString, 10) }, { runValidators: true })
+        .then(() => {
+          const transporter = nodemailer.createTransport({
+            service: 'Outlook365',
+            auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
+          });
+          transporter.sendMail({
+            from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
+            to: req.body.email,
+            subject: 'Automatic reply from Ibrahim P.G.',
+            text: `
+        ${user.name},
+        Use this password to log in to your account and then immediately change your password please.
+        ---    
+        ${randomString}
+        `,
+          });
+        })
+        .then(() => res.status(201).json('Temporary password sent by email.'));
+    })
+    .catch(() => res.status(500));
+};
+
 // Login User
 exports.login = (req, res) => {
   User.findOne({ email: req.body.email }).exec()
