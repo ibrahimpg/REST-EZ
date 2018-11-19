@@ -11,7 +11,8 @@ const User = require('../models/user');
 
 // Register User
 exports.register = (req, res) => {
-  const randomString = 'whatever';
+  const randomString = Math.random().toString(36).substring(2, 15)
+  + Math.random().toString(36).substring(2, 15);
   User.find({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
