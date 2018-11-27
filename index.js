@@ -4,11 +4,13 @@ const cors = require('cors');
 
 const app = express();
 
+const user = require('./api/routes/user');
+
 app.use(express.json());
 
 app.options('*', cors());
 
-app.use('/user', require('./api/routes/user'));
+app.use('/user', user);
 
 app.use((req, res, next) => {
   const error = new Error('Route not available.');
