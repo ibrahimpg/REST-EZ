@@ -4,6 +4,8 @@ const cors = require('cors');
 
 const app = express();
 
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+
 const user = require('./api/routes/user');
 
 app.use(express.json());
@@ -22,8 +24,6 @@ app.use((error, req, res) => {
   res.status(error.status || 500);
   res.json({ error: { message: error.message } });
 });
-
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 const port = process.env.PORT || 8080;
 
