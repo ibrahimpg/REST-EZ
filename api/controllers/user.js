@@ -131,6 +131,11 @@ exports.reset = (req, res) => {
     .catch(() => res.status(500));
 };
 
+// Change Password
+exports.changepass = (req, res) => {
+  // Work in progress
+};
+
 // Login User
 exports.login = (req, res) => {
   User.findOne({ email: req.body.email }).exec()
