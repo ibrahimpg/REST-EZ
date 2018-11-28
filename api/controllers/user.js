@@ -3,39 +3,32 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-const cloudinary = require('cloudinary');
-const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 // Models
 const User = require('../models/user');
 
+// Middleware
+const transporter = require('../middleware/transporter');
+
 // Register User
 exports.register = (req, res) => {
-  const randomString = Math.random().toString(36).substring(2, 15)
-  + Math.random().toString(36).substring(2, 15);
+  const randomString = crypto.randomBytes(16).toString('hex');
   User.find({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length >= 1 || req.body.password.length < 6) {
         return res.status(400).json({ message: 'Registration failed.' });
       }
-      return cloudinary.v2.uploader.upload('./temp/placeholder.jpg')
-        .then(result => new User({
-          _id: new mongoose.Types.ObjectId(),
-          email: req.body.email,
-          name: req.body.name,
-          password: bcrypt.hashSync(req.body.password, 10),
-          bio: 'Bio...',
-          display: result.secure_url,
-          verified: false,
-          hash: randomString,
-        }).save())
+      return new User({
+        _id: new mongoose.Types.ObjectId(),
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, 10),
+        verified: false,
+        hash: randomString,
+      }).save()
         .then(() => {
-          const transporter = nodemailer.createTransport({
-            service: 'Outlook365',
-            auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
-          });
           transporter.sendMail({
-            from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
+            from: process.env.EMAIL_ADDRESS,
             to: req.body.email,
             subject: 'Automatic reply from Ibrahim P.G.',
             text: `
@@ -67,8 +60,7 @@ exports.verify = (req, res) => {
 
 // Forgot Password
 exports.forgot = (req, res) => {
-  const randomString = Math.random().toString(36).substring(2, 15)
-  + Math.random().toString(36).substring(2, 15);
+  const randomString = crypto.randomBytes(16).toString('hex');
   User.findOne({ email: req.body.email }).exec()
     .then((user) => {
       if (user.length === 0 || user.verified === false) {
@@ -77,12 +69,8 @@ exports.forgot = (req, res) => {
       return User.findByIdAndUpdate(user._id,
         { hash: randomString }, { runValidators: true })
         .then(() => {
-          const transporter = nodemailer.createTransport({
-            service: 'Outlook365',
-            auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
-          });
           transporter.sendMail({
-            from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
+            from: process.env.EMAIL_ADDRESS,
             to: req.body.email,
             subject: 'Automatic reply from Ibrahim P.G.',
             text: `
@@ -100,8 +88,7 @@ exports.forgot = (req, res) => {
 
 // Reset Password
 exports.reset = (req, res) => {
-  const randomString = Math.random().toString(36).substring(2, 15)
-  + Math.random().toString(36).substring(2, 15);
+  const randomString = crypto.randomBytes(16).toString('hex');
   User.findOne({ hash: req.params.hash }).exec()
     .then((user) => {
       if (user.length === 0) {
@@ -110,12 +97,8 @@ exports.reset = (req, res) => {
       return User.findByIdAndUpdate(user._id,
         { password: bcrypt.hashSync(randomString, 10) }, { runValidators: true })
         .then(() => {
-          const transporter = nodemailer.createTransport({
-            service: 'Outlook365',
-            auth: { user: 'ibrahimpg@outlook.com', pass: process.env.EMAIL_PW },
-          });
           transporter.sendMail({
-            from: '"Ibrahim P.G." <ibrahimpg@outlook.com>',
+            from: process.env.EMAIL_ADDRESS,
             to: req.body.email,
             subject: 'Automatic reply from Ibrahim P.G.',
             text: `
@@ -149,23 +132,6 @@ exports.login = (req, res) => {
       return res.status(400).json({ message: 'Login failed.' });
     })
     .catch(() => res.status(500).json({ message: 'Login failed.' }));
-};
-
-// Update User
-exports.update = (req, res) => {
-  if (req.file == null) {
-    return User
-      .findByIdAndUpdate(req.tokenData.id, { bio: req.body.bio }, { runValidators: true })
-      .then(() => res.json('User updated.'))
-      .catch(() => res.status(500));
-  }
-  return cloudinary.v2.uploader.upload(req.file.path, {
-    public_id: req.tokenData.username, invalidate: true, format: 'jpg', tags: [req.tokenData.username],
-  })
-    .then(result => User.findByIdAndUpdate(req.tokenData.id,
-      { bio: req.body.bio || ' ', display: result.secure_url }, { runValidators: true }))
-    .then(() => res.json('User updated.'))
-    .catch(() => res.status(500));
 };
 
 // Delete User

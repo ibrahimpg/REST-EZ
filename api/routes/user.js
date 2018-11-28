@@ -29,9 +29,6 @@ router.post('/changepass', UserControllers.changepass);
 // Login User
 router.post('/login', UserControllers.login);
 
-// Update User
-router.patch('/update', authorization, upload.single('display'), UserControllers.update);
-
 // Delete User
 router.delete('/delete', authorization, UserControllers.delete);
 
